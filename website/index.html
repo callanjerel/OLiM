@@ -3,9 +3,15 @@
     <head>
         <link rel="stylesheet" href="./styles/index.css">
     </head>
+        
+    </head>
     <body>
-        <script src="./scripts/index.js" defer></script>
-        <button id="getApi">Press Me</button>
-        <p id="text"></p>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io.connect('http://localhost:6060')
+            socket.on('connect', () => {
+                console.log('connected to server')
+            })
+        </script>
     </body>
 </html>
