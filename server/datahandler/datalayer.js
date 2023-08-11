@@ -124,7 +124,7 @@ const chatRooms = {
         }
 
         // enforcing a data structure
-        const requiredKeys = [{name: "", dataType: ""}]
+        const requiredKeys = [{name: "admin_user_id", dataType: "string"}]
         for (let i = 0; i < requiredKeys.length; i++) {
             let key = requiredKeys[i]
             if (!data.hasOwnProperty(key.name) || typeof data[key.name] !== key.dataType) {
@@ -134,7 +134,12 @@ const chatRooms = {
         }
 
         const dataFormat = {
-
+            id: "",  // TODO: generate unique id
+            admin_user_id: data.admin_user_id,
+            invite_code: data.invite_code,
+            password_hash: data.password_hash,
+            users: [],
+            messages: []
         }
 
         create("chat_rooms", multipleDocs, dataFormat, callback)
@@ -167,7 +172,13 @@ const chatRooms = {
         }
 
         // enforcing a data structure
-        const validKeys = [{name: "", dataType: ""}]
+        const validKeys = [
+            {name: "admin_user_id", dataType: "string"},
+            {name: "invite_code", dataType: "string"},
+            {name: "password_hash", dataType: "string"},
+            {name: "users", dataType: "object"},
+            {name: "messages", dataType: "object"}
+        ]
         const dataFormat = {}
 
         for (let i = 0; i < validKeys.length; i++) {
@@ -214,7 +225,7 @@ const users = {
         }
 
         // enforcing a data structure
-        const requiredKeys = [{name: "", dataType: ""}]
+        const requiredKeys = [{name: "username", dataType: "string"}]
         for (let i = 0; i < requiredKeys.length; i++) {
             let key = requiredKeys[i]
             if (!data.hasOwnProperty(key.name) || typeof data[key.name] !== key.dataType) {
@@ -224,7 +235,8 @@ const users = {
         }
 
         const dataFormat = {
-
+            id: "",     // TODO generate unique id
+            username: data.username
         }
 
         create("users", multipleDocs, dataFormat, callback)
@@ -257,7 +269,7 @@ const users = {
         }
 
         // enforcing a data structure
-        const validKeys = [{name: "", dataType: ""}]
+        const validKeys = [{name: "username", dataType: "string"}]
         const dataFormat = {}
 
         for (let i = 0; i < validKeys.length; i++) {
@@ -304,7 +316,11 @@ const messages = {
         }
 
         // enforcing a data structure
-        const requiredKeys = [{name: "", dataType: ""}]
+        const requiredKeys = [
+            {name: "user_id", dataType: "string"},
+            {name: "timestamp", dataType: "string"},
+            {name: "content", dataType: "string"}
+        ]
         for (let i = 0; i < requiredKeys.length; i++) {
             let key = requiredKeys[i]
             if (!data.hasOwnProperty(key.name) || typeof data[key.name] !== key.dataType) {
@@ -314,7 +330,10 @@ const messages = {
         }
 
         const dataFormat = {
-
+            id: "",     // TODO generate unique id
+            user_id: data.user_id,
+            timestamp: data.timestamp,
+            content: data.content
         }
 
         create("messages", multipleDocs, dataFormat, callback)
@@ -347,7 +366,7 @@ const messages = {
         }
 
         // enforcing a data structure
-        const validKeys = [{name: "", dataType: ""}]
+        const validKeys = [{name: "content", dataType: "string"}]
         const dataFormat = {}
 
         for (let i = 0; i < validKeys.length; i++) {
