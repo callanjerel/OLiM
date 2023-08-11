@@ -6,12 +6,11 @@
         
     </head>
     <body>
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            const socket = io.connect('http://localhost:6060')
-            socket.on('connect', () => {
-                console.log('connected to server')
-            })
-        </script>
+        <script src="/socket.io/socket.io.js" defer></script>
+        <script src="scripts/index.js" defer></script>
+        <p>This is the message service :)</p>
+        <hr>
+        <input id="m">
+        <button id="b">Send</button>
     </body>
 </html>
