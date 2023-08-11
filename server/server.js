@@ -19,6 +19,7 @@ io.on('connection', (socket) => {
 
     socket.on('chat message', (msg) => {
         console.log("Message recieved: " + msg)
+        msg.timestamp = '12:00:00'
         io.emit('chat message', msg)
     })
 
