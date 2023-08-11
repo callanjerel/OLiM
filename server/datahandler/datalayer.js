@@ -113,6 +113,11 @@ const remove = async (collectionName, multiple, filter, callback) => {
 const chatRooms = {
     /**
      * Inserts a chat room document(s) into the database
+     * 
+     * Required fields: "admin_user_id"
+     * 
+     * Available fields: "admin_user_id", "invite_code", "password_hash", "users", "messages"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be inserted
      * @param {object} data The document or array of documents to insert
      * @param {function(error, result)} callback The function to call after the operation is executed
@@ -146,6 +151,9 @@ const chatRooms = {
     },
     /**
      * Retrieves a chat room document(s) from the database
+     * 
+     * Available fields: "id", "admin_user_id", "invite_code", "password_hash", "users", "messages"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be retrieved
      * @param {object} filter The filter to compare documents against
      * @param {function(error, result)} callback The function to after once the operation is executed
@@ -160,6 +168,9 @@ const chatRooms = {
     },
     /**
      * Updates a chat room document(s) in the database
+     * 
+     * Valid update fields: "admin_user_id", "invite_code", "password_hash", "users", "messages"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be updated
      * @param {object} filter The filter to compare documents against
      * @param {object} data The updated fields
@@ -197,6 +208,9 @@ const chatRooms = {
     },
     /**
      * Removes a chat room document(s) from the database
+     * 
+     * Available fields: "id", "admin_user_id", "invite_code", "password_hash", "users", "messages"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be removed
      * @param {object} filter The filter to compare documents against
      * @param {function(error, result)} callback The function to call after the operation is executed
@@ -214,6 +228,11 @@ const chatRooms = {
 const users = {
     /**
      * Inserts a user document(s) into the database
+     * 
+     * Required fields: "username"
+     * 
+     * Available fields: "username"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be inserted
      * @param {object} data The document or array of documents to insert
      * @param {function(error, result)} callback The function to call after the operation is executed
@@ -243,6 +262,9 @@ const users = {
     },
     /**
      * Retrieves a user document(s) from the database
+     * 
+     * Available fields: "id", "username"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be retrieved
      * @param {object} filter The filter to compare documents against
      * @param {function(error, result)} callback The function to after once the operation is executed
@@ -257,6 +279,9 @@ const users = {
     },
     /**
      * Updates a user document(s) in the database
+     * 
+     * Valid update fields: "username"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be updated
      * @param {object} filter The filter to compare documents against
      * @param {object} data The updated fields
@@ -288,6 +313,9 @@ const users = {
     },
     /**
      * Removes a user document(s) from the database
+     * 
+     * Available fields: "id", "username"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be removed
      * @param {object} filter The filter to compare documents against
      * @param {function(error, result)} callback The function to call after the operation is executed
@@ -305,6 +333,11 @@ const users = {
 const messages = {
     /**
      * Inserts a message document(s) into the database
+     * 
+     * Required fields: "user_id", "timestamp", "content"
+     * 
+     * Availabe fields: "user_id", "timestamp", "content"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be inserted
      * @param {object} data The document or array of documents to insert
      * @param {function(error, result)} callback The function to call after the operation is executed
@@ -340,6 +373,9 @@ const messages = {
     },
     /**
      * Retrieves a message document(s) from the database
+     * 
+     * Availabe fields: "id", "user_id", "timestamp", "content"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be retrieved
      * @param {object} filter The filter to compare documents against
      * @param {function(error, result)} callback The function to after once the operation is executed
@@ -354,6 +390,9 @@ const messages = {
     },
     /**
      * Updates a message document(s) in the database
+     * 
+     * Valid update fields: "content"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be updated
      * @param {object} filter The filter to compare documents against
      * @param {object} data The updated fields
@@ -385,6 +424,9 @@ const messages = {
     },
     /**
      * Removes a user document(s) from the database
+     * 
+     * Availabe fields: "id", "user_id", "timestamp", "content"
+     * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be removed
      * @param {object} filter The filter to compare documents against
      * @param {function(error, result)} callback The function to call after the operation is executed
