@@ -1,4 +1,4 @@
-const datalayer = {}
+const dal = require('./datahandler/datalayer.js')
 
 const recieveMessage = (data) => {
         console.log("Message recieved: " + data)

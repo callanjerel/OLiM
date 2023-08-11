@@ -14,8 +14,6 @@ app.get('/', (req, res) => {
 
 sockethandler(io)
 
-
-
 http.listen(port, () => {
     console.log(`Server listening on localhost:${port}`)
 })
