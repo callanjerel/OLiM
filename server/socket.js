@@ -1,9 +1,9 @@
 const dal = require('./datahandler/datalayer.js')
 
 const recieveMessage = (data) => {
-        console.log("Message recieved: " + data)
-        msg.timestamp = '12:00:00'
-        io.emit('chat message', msg)
+        console.log("Message recieved: " + data.body)
+        // data.timestamp = '12:00:00'
+        // io.emit('chat message', msg)
 }
 
 module.exports = (io) => {
