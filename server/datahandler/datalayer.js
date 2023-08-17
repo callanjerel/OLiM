@@ -143,8 +143,8 @@ const chatRooms = {
             admin_user_id: data.admin_user_id,
             invite_code: data.invite_code,
             password_hash: data.password_hash,
-            users: [],
-            messages: []
+            users: data.users,
+            messages: data.messages
         }
 
         create("chat_rooms", multipleDocs, dataFormat, callback)
