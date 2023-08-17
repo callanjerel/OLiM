@@ -3,14 +3,17 @@
     <head>
         <link rel="stylesheet" href="./styles/index.css">
     </head>
-        
-    </head>
     <body>
         <script src="/socket.io/socket.io.js" defer></script>
         <script src="scripts/index.js" defer></script>
+
         <p>This is the message service :)</p>
         <hr>
-        <input id="m">
-        <button id="b">Send</button>
+        <form id="message-form">    
+            <input id="message-input">
+            <button id="b" type="button">Send</button>
+            <ul id="messages">
+            </ul>
+         </form>
     </body>
 </html>
