@@ -79,7 +79,7 @@ const b = document.getElementById('b')
 //this <input> element will be between the <form></form> tags
 const input = document.getElementById('message-input');
 
-// Local: Sets up an event listener for when the local user submits the form (sends a message).
+// Local: Sets up an event listener, activates when user enters a message
 b.addEventListener('click', (event) => {
 
 // Local: Prevents the default behavior of the form submission, which avoids reloading the page.
@@ -95,4 +95,13 @@ input.value = '';
 // Local: Sends the message typed by the local user to the server using the 'chat message' event, 
 // so the server can broadcast it to other connected clients (including outside users).
 socket.emit('chat message', message);
+});
+
+form.addEventListener('submit', (event) => {//code to fix enter bug
+    event.preventDefault();
+
+    const message = input.value;
+    input.value = '';
+
+    socket.emit('chat message', message);
 });
