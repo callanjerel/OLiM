@@ -9,7 +9,7 @@ module.exports = (io) => {
         console.log("Message recieved: " + data.content)
         dal.messages.create(false, data, (err, result) => {
             if (err) {
-                console.errror(err)
+                console.error(err)
                 return
             }
             console.log(result)
