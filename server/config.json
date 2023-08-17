@@ -1,0 +1,17 @@
+{
+    "sever": {
+        "port": 6060
+    },
+    "caching": {
+        "chat_rooms": {
+            "source_update_type": "instant"
+        },
+        "users": {
+            "source_update_type": "instant"
+        },
+        "messages": {
+            "source_update_type": "cycle",
+            "source_update_interval": 5000
+        }
+    }
+}
