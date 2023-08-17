@@ -1,28 +1,35 @@
 const dal = require('./datahandler/datalayer.js')
 
-const addMessage = (data) => { // Temporary solution to adding messages to message
-    data.timestamp = '12:00:00'
-    data.user_id = '0'
-    data.content = data.body
-    dal.messages.create(false, data, (err, result) => {
-        if (err) {
-            console.error(err)
-            return
-        }
-    })
-}
+const getDateTime = () => {
 
+}
 
 module.exports = (io) => {
     const recieveMessage = (data) => {
-        
-        console.log("Message recieved: " + data)
-        addMessage(data) // Temporary solution
+        console.log("Message recieved: " + data.content)
+        dal.messages.create(false, data, (err, result) => {
+            if (err) {
+                console.errror(err)
+                return
+            }
+            console.log(result)
+        })
         io.emit('chat message', data)
     }
+
+    const sendMessageLog = () => {
+        dal.messages.get(true, {}, (err, result) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+            console.log(result)
+        })
+    }
+
     io.on('connection', (socket) => {
         console.log('user connected')
-    
+        sendMessageLog()
         socket.on('chat message', (data) => {
             recieveMessage(data)
         })
