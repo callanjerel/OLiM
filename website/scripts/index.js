@@ -1,37 +1,6 @@
 const button = document.getElementById('b')
 const message = document.getElementById('m')
-/* robs code 
-// Connect to the server
-const socket = io.connect('http://localhost:6060')
 
-// On a successful connection, log a connection success
-socket.on('connect', () => {
-    console.log('connected to server')
-})
-
-//This calls the callback when it recieves a message
-//Recieves some data, under the variable 'data' from the server
-//The parameter, 'chat message', is the name for the socket
-socket.on('chat message', (data) => {
-    console.log(data)
-    console.log(data.user)
-    console.log(data.body)
-    console.log(data.timestamp)
-})
-
-//This is an eventListener, which calls the function inside when clicked
-button.addEventListener("click", () => {
-    console.log("Message sent")
-    //socket.emit sends a message
-    //sends it under the 'chat message' socket
-    //the second parameter is the message that the server will recieve
-    let messageJson = {
-        user:'anon',
-        body:message['value']
-    }
-    socket.emit('chat message', messageJson)
-})
-*/
 // const button = document.getElementById('getApi')
 const para = document.getElementById('text')
 const socket = io.connect('http://localhost:6060');
@@ -41,10 +10,10 @@ socket.on('connect', function() {
 });
 
 // Listen for any custom events from the server
-// socket.on('chat message', function(msg) {
-//     // Handle the incoming message, maybe display it on the page
-//     console.log('Received:', msg);
-// });
+socket.on('chat message', function(msg) {
+    // Handle the incoming message, maybe display it on the page
+    console.log('Received:', msg);
+});
 
 
 // const socket = io();//creating an instance of the socket.io client
@@ -53,6 +22,13 @@ socket.on('connect', function() {
 
 //Outside: Sets up a listener for the event 'chat message' coming from the server, indicating incoming messages from other users..
 socket.on('chat message', (message) => {
+    
+   const tMessage = input.value.trim();
+    if (tMessage === '') {
+        // If the message is empty after trimming, then don't send it.
+        console.warn("Empty message not sent");
+        return;
+    }
 console.log("hello")
 console.log(message.body)
 
@@ -71,6 +47,10 @@ li.textContent = message;
 messages.appendChild(li);
 });
 
+
+
+
+
 // Local: Finds the HTML <form> (textbox) element with the ID 'message-form', where the local user can enter messages.
 const form = document.getElementById('message-form');
 const b = document.getElementById('b')
@@ -78,6 +58,11 @@ const b = document.getElementById('b')
 //Local: Finds the HTML <input> element with the ID 'message-input', where the local user can type their messages.
 //this <input> element will be between the <form></form> tags
 const input = document.getElementById('message-input');
+
+
+
+
+
 
 // Local: Sets up an event listener, activates when user enters a message
 b.addEventListener('click', (event) => {
@@ -100,8 +85,14 @@ socket.emit('chat message', message);
 form.addEventListener('submit', (event) => {//code to fix enter bug
     event.preventDefault();
 
-    const message = input.value;
-    input.value = '';
+    const message = input.value.trim();
+  
+    if (message === '') {
+        // If the message is empty after trimming, then don't send it.
+        console.warn("Empty message not sent");
+        return;
+    }
 
+    input.value = '';
     socket.emit('chat message', message);
 });
