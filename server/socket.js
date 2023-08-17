@@ -1,12 +1,15 @@
 const dal = require('./datahandler/datalayer.js')
 
-const getDateTime = () => {
-
+const addDateTime = (data) => {
+    let date = new Date()
+    console.log(date.toUTCString())
+    data.timestamp = date.toUTCString();
 }
 
 module.exports = (io) => {
     const recieveMessage = (data) => {
         console.log("Message recieved: " + data.content)
+        addDateTime(data)
         dal.messages.create(false, data, (err, result) => {
             if (err) {
                 console.error(err)
