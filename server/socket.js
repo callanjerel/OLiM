@@ -23,7 +23,7 @@ module.exports = (io) => {
                 console.error(err)
                 return
             }
-            console.log(result)
+            io.emit('message log', result)
         })
     }
 
