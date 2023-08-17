@@ -14,7 +14,13 @@ module.exports = (io) => {
             messages:[
                 data
             ]
-        }, (err) => {console.error(err)})
+        }, (err, result) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+            console.log(result)
+        })
         io.emit('chat message', data)
     }
 
