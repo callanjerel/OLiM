@@ -15,7 +15,7 @@ const addMessage = (data) => { // Temporary solution to adding messages to messa
 
 module.exports = (io) => {
     const recieveMessage = (data) => {
-        for (property)
+        
         console.log("Message recieved: " + data)
         addMessage(data) // Temporary solution
         io.emit('chat message', data)
