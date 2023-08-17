@@ -1,6 +1,6 @@
 const dal = require('./datahandler/datalayer.js')
 
-const addMessage = (data) => { // Temporary solution to adding messages to queue
+const addMessage = (data) => { // Temporary solution to adding messages to message
     data.timestamp = '12:00:00'
     data.user_id = '0'
     data.content = data.body
@@ -9,17 +9,17 @@ const addMessage = (data) => { // Temporary solution to adding messages to queue
             console.error(err)
             return
         }
-        
     })
 }
 
 
 module.exports = (io) => {
     const recieveMessage = (data) => {
-        console.log("Message recieved: " + data.body)
+        
+        console.log("Message recieved: " + data)
+        addMessage(data) // Temporary solution
         io.emit('chat message', data)
     }
-    // addMessage(data) <- This is commented :)
     io.on('connection', (socket) => {
         console.log('user connected')
     
