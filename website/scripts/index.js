@@ -33,6 +33,7 @@ const displayMessage = (data) => {
     messageElement.textContent = `${data.user_id}: ${data.content}`;
     // Add messageElement to the messageContainer
     messageContainer.appendChild(messageElement)
+    scrollToBottom()
 } 
 
 // Recieve and display message history
@@ -73,6 +74,7 @@ sendButton.addEventListener('click', (event) => {
     const content = input.value;
     input.value = '';
     sendMessage(content)
+    scrollToBottom();
 })
 
 form.addEventListener('submit', (event) => {//code to fix enter bug
@@ -80,4 +82,12 @@ form.addEventListener('submit', (event) => {//code to fix enter bug
     const content = input.value;
     input.value = '';
     sendMessage(content)
+    scrollToBottom();
 })
+
+
+const messagesContainer = document.getElementById("messages");
+
+function scrollToBottom() {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
