@@ -30,7 +30,11 @@ const displayMessage = (data) => {
     console.log(`Received: ${data.user_id}: ${data.content}`)
     // Create messageElement and assign text
     const messageElement = document.createElement('li')
-    messageElement.textContent = `${data.user_id}: ${data.content}`;
+    if (data.user_id === userId) {
+        messageElement.textContent = `me (${data.user_id}): ${data.content}`
+    } else {
+        messageElement.textContent = `${data.user_id}: ${data.content}`;
+    }
     // Add messageElement to the messageContainer
     messageContainer.appendChild(messageElement)
 } 
