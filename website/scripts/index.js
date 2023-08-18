@@ -44,13 +44,16 @@ const displayMessage = (data) => {
     // Create messageElement and assign text
     const messageElement = document.createElement('li')
 
+
     if (data.user_id === userId) {
-        messageElement.textContent = `me (${data.user_id}) @ ${formattedDate}: ${data.content}`;
+        messageElement.innerHTML = `<div class="metadata">me (${data.user_id}) @ ${formattedDate}:</div><div class="messageContent">${data.content}</div>`;
     } else {
-        messageElement.textContent = `${data.user_id} @ ${formattedDate}: ${data.content}`;
+        messageElement.innerHTML = `<div class="metadata"> (${data.user_id}) @ ${formattedDate}:</div><div class="messageContent">${data.content}</div>`;
+
     }
     // Add messageElement to the messageContainer
     messageContainer.appendChild(messageElement)
+
     scrollToBottom()
 } 
 
