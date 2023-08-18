@@ -1,0 +1,13 @@
+ul{
+    list-style: none;
+}
+#message-form {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 10px;
+    box-sizing: border-box;
+    box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
+}
