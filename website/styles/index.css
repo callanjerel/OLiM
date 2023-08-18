@@ -17,6 +17,7 @@ body {
     padding: 5px;
     border: 1px solid #ccc;
     background-color: #f0f0f0;
+    
 }
 
 #message-form {
@@ -44,4 +45,14 @@ body {
     border-radius: 4px;
     padding: 8px 12px;
     cursor: pointer;
+}
+#title{
+   text-align: center;
+}
+.metadata{
+    color:rgb(119, 143, 143);
+    font-size: smaller;
+}
+.messageContent{
+    font-size: larger;
 }
