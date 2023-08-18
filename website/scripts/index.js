@@ -10,10 +10,14 @@ const getUserId = () => {
         console.log(`user_id already stored: ${storedId}`)
         return storedId.toString()
     }
-    storedId = Math.floor((Math.random() * 10000))
+    storedId = Math.floor((Math.random() * 10000)).toString()
     console.log(`user_id not stored, new id: ${storedId}`)
-    localStorage.setItem('user_id', storedId.toString())
+    localStorage.setItem('user_id', storedId)
     return storedId
+}
+
+const clearUserId = () => {
+    localStorage.clear()
 }
 
 const userId = getUserId() 
@@ -48,6 +52,10 @@ socket.on('chat message', (data) => {
 const sendMessage = (content) => {
     content = content.trim()
     if (!content || content.length === 0) {
+        return
+    }
+    if (content == '/clearId') {
+        clearUserId()
         return
     }
     let data = {
