@@ -2,7 +2,7 @@ const dal = require('./datahandler/datalayer.js')
 
 const addMetaData = (data) => {
     let date = new Date()
-    data.timestamp = date.toUTCString()
+    data.timestamp = date.toISOString()
 }
 
 module.exports = (io) => {

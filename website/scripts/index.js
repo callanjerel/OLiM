@@ -16,21 +16,39 @@ const getUserId = () => {
     return storedId
 }
 
-const clearUserId = () => {
-    localStorage.clear()
-}
-
 const userId = getUserId() 
 
 socket.on('connect', () => {
     console.log('Connected to the server.')
 });
 
+//////////////////////////////  Recieve Message   //////////////////////////////
+
+const formatDate = (isoString) => {
+    let dateObj = new Date(isoString);
+
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    
+    const hours = dateObj.getHours().toString().padStart(2, '0');
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+
+    return `${month}/${day} ${hours}:${minutes}`;
+}
+
 const displayMessage = (data) => {
     console.log(`Received: ${data.user_id}: ${data.content}`)
+    // Format date for local time
+    const formattedDate = formatDate(data.timestamp)
+
     // Create messageElement and assign text
     const messageElement = document.createElement('li')
-    messageElement.textContent = `${data.user_id}: ${data.content}`;
+
+    if (data.user_id === userId) {
+        messageElement.textContent = `me (${data.user_id}) @ ${formattedDate}: ${data.content}`;
+    } else {
+        messageElement.textContent = `${data.user_id} @ ${formattedDate}: ${data.content}`;
+    }
     // Add messageElement to the messageContainer
     messageContainer.appendChild(messageElement)
     scrollToBottom()
@@ -49,6 +67,8 @@ socket.on('chat message', (data) => {
     displayMessage(data)
 })
 
+//////////////////////////////  Send Message   //////////////////////////////
+
 // sends the message, you just pass in the message body
 const sendMessage = (content) => {
     content = content.trim()
@@ -56,7 +76,7 @@ const sendMessage = (content) => {
         return
     }
     if (content == '/clearId') {
-        clearUserId()
+        localStorage.clear()
         return
     }
     let data = {
