@@ -1,38 +1,39 @@
 const dal = require('./datahandler/datalayer.js')
 
-const addDateTime = (data) => {
+const addMetaData = (data) => {
     let date = new Date()
-    console.log(date.toUTCString())
-    data.timestamp = date.toUTCString();
+    data.timestamp = date.toUTCString()
 }
 
 module.exports = (io) => {
     const recieveMessage = (data) => {
         console.log("Message recieved: " + data.content)
-        addDateTime(data)
+        addMetaData(data)
         dal.messages.create(false, data, (err, result) => {
             if (err) {
                 console.error(err)
                 return
             }
-            console.log(result)
+            if (result.acknowledged) {
+                console.log("Message persisted")
+            }
         })
         io.emit('chat message', data)
     }
 
-    const sendMessageLog = () => {
+    const sendMessageLog = (specificSocket) => {
         dal.messages.get(true, {}, (err, result) => {
             if (err) {
                 console.error(err)
                 return
             }
-            io.emit('message log', result)
+            specificSocket.emit('message log', result)
         })
     }
 
     io.on('connection', (socket) => {
         console.log('user connected')
-        sendMessageLog()
+        sendMessageLog(socket)
         socket.on('chat message', (data) => {
             recieveMessage(data)
         })
