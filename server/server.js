@@ -5,7 +5,6 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const sockethandler = require('./socket')
 const path = require('path')
-const port = config.sever.port
 
 const dal = require('./datahandler/datalayer')
 dal.init(() => {
@@ -17,7 +16,7 @@ dal.init(() => {
     
     sockethandler(io)
     
-    http.listen(port, () => {
-        console.log(`Server listening on localhost: ${port}`)
+    http.listen(config.server.port, () => {
+        console.log(`Server listening on localhost: ${config.server.port}`)
     })
 })

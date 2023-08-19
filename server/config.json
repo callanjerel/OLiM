@@ -1,5 +1,5 @@
 {
-    "sever": {
+    "server": {
         "port": 6060
     },
     "caching": {
