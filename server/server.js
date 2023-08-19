@@ -7,14 +7,17 @@ const sockethandler = require('./socket')
 const path = require('path')
 const port = config.sever.port
 
-app.use(express.static(path.resolve('../website')))
+const dal = require('./datahandler/datalayer')
+dal.init(() => {
+    app.use(express.static(path.resolve('../website')))
 
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve('../website/index.html'))
-})
-
-sockethandler(io)
-
-http.listen(port, () => {
-    console.log(`Server listening on localhost: ${port}`)
+    app.get('/', (req, res) => {
+        res.sendFile(path.resolve('../website/index.html'))
+    })
+    
+    sockethandler(io)
+    
+    http.listen(port, () => {
+        console.log(`Server listening on localhost: ${port}`)
+    })
 })
