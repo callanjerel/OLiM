@@ -1,6 +1,12 @@
 const { MongoClient } = require('mongodb')
 const uri = "mongodb://localhost:27017"
 
+// ID tracking states
+let initializedChatRooms = false
+let initializedUsers = false
+let initializedMessages = false
+let initialized = false
+
 /**
  * Inserts a document(s) into the specified collection
  * @param {string} collectionName Collection to insert into
@@ -110,7 +116,22 @@ const remove = async (collectionName, multiple, filter, callback) => {
     }
 }
 
+// Tracking last ID in each collection (separate object from collection objects for encapsulation)
+const lastId = {
+    chatRooms: 0,
+    users: 0,
+    messages: 0
+}
+
 const chatRooms = {
+    /**
+     * Gets the next valid chat room ID in the sequence
+     * @returns An ID number
+     */
+    nextId: () => {
+        lastId.chatRooms++
+        return lastId.chatRooms
+    },
     /**
      * Inserts a chat room document(s) into the database
      * 
@@ -128,8 +149,13 @@ const chatRooms = {
             return
         }
 
+        if (!initialized) {
+            callback(new Error("Object insertion is disabled until ID tracking is initialized"), null)
+            return
+        }
+
         // enforcing a data structure
-        const requiredKeys = [{name: "admin_user_id", dataType: "string"}]
+        const requiredKeys = [{name: "admin_user_id", dataType: "number"}]
         for (let i = 0; i < requiredKeys.length; i++) {
             let key = requiredKeys[i]
             if (!data.hasOwnProperty(key.name) || typeof data[key.name] !== key.dataType) {
@@ -139,7 +165,7 @@ const chatRooms = {
         }
 
         const dataFormat = {
-            id: "",  // TODO: generate unique id
+            id: chatRooms.nextId(),
             admin_user_id: data.admin_user_id,
             invite_code: data.invite_code,
             password_hash: data.password_hash,
@@ -184,7 +210,7 @@ const chatRooms = {
 
         // enforcing a data structure
         const validKeys = [
-            {name: "admin_user_id", dataType: "string"},
+            {name: "admin_user_id", dataType: "number"},
             {name: "invite_code", dataType: "string"},
             {name: "password_hash", dataType: "string"},
             {name: "users", dataType: "object"},
@@ -227,6 +253,14 @@ const chatRooms = {
 
 const users = {
     /**
+     * Gets the next valid user ID in the sequence
+     * @returns An ID number
+     */
+    nextId: () => {
+        lastId.users++
+        return lastId.users
+    },
+    /**
      * Inserts a user document(s) into the database
      * 
      * Required fields: "username"
@@ -243,6 +277,11 @@ const users = {
             return
         }
 
+        if (!initialized) {
+            callback(new Error("Object insertion is disabled until ID tracking is initialized"), null)
+            return
+        }
+
         // enforcing a data structure
         const requiredKeys = [{name: "username", dataType: "string"}]
         for (let i = 0; i < requiredKeys.length; i++) {
@@ -254,7 +293,7 @@ const users = {
         }
 
         const dataFormat = {
-            id: "",     // TODO generate unique id
+            id: users.nextId(),
             username: data.username
         }
 
@@ -332,6 +371,14 @@ const users = {
 
 const messages = {
     /**
+     * Gets the next valid message ID in the sequence
+     * @returns An ID number
+     */
+    nextId: () => {
+        lastId.messages++
+        return lastId.messages
+    },
+    /**
      * Inserts a message document(s) into the database
      * 
      * Required fields: "user_id", "timestamp", "content"
@@ -348,9 +395,14 @@ const messages = {
             return
         }
 
+        if (!initialized) {
+            callback(new Error("Object insertion is disabled until ID tracking is initialized"), null)
+            return
+        }
+
         // enforcing a data structure
         const requiredKeys = [
-            {name: "user_id", dataType: "string"},
+            {name: "user_id", dataType: "number"},
             {name: "timestamp", dataType: "string"},
             {name: "content", dataType: "string"}
         ]
@@ -363,7 +415,7 @@ const messages = {
         }
 
         const dataFormat = {
-            id: "",     // TODO generate unique id
+            id: messages.nextId(),
             user_id: data.user_id,
             timestamp: data.timestamp,
             content: data.content
@@ -441,8 +493,73 @@ const messages = {
     }
 }
 
+/**
+ * Sorts an array by a specific field's value
+ * @param {string} fieldName The name of the field to sort by
+ * @param {object} data Array to sort
+ * @returns The sorted input array
+ */
+const sortByField = (fieldName, data) => {
+    return data.sort((a, b) => a[fieldName] - b[fieldName])
+}
+
+/**
+ * Generic helper function to update "lastId" system
+ * @param {string} fieldName Refers to which collection is being read
+ * @param {object} err An error returned from the "get" request
+ * @param {object} res The response returned from the "get" request
+ */
+const setLastId = (fieldName, err, res) => {
+    if (err) {
+        console.log(err)
+        return
+    }
+    let sortedData = sortByField("id", res)
+    if (sortedData.length > 1) {
+        lastId[fieldName] = sortedData[sortedData.length-1].id
+    }
+}
+
+/**
+ * Helper function to check state on initialization and execute a callback
+ * @param {function} callback Functoin to execute if initialization has completed
+ */
+const checkInitialized = (callback) => {
+    if (initializedChatRooms && initializedMessages && initializedUsers) {
+        initialized = true
+        callback()
+    }
+}
+
+/**
+ * Initializes the "lastID" system to ensure all new data entering the database is unique
+ * @param {function} callback The function run after initialization
+ */
+const init = (callback) => {
+    chatRooms.get(true, {}, (err, res) => {
+        setLastId("chatRooms", err, res)
+        initializedChatRooms = true
+        checkInitialized(callback)
+    })
+
+    users.get(true, {}, (err, res) => {
+        setLastId("users", err, res)
+        initializedUsers = true
+        checkInitialized(callback)
+    })
+
+    messages.get(true, {}, (err, res) => {
+        setLastId("messages", err, res)
+        initializedMessages = true
+        checkInitialized(callback)
+    })
+}
+
 module.exports = {
     chatRooms,
     users,
-    messages
+    messages,
+    lastId,
+    init,
+    sortByField
 }
