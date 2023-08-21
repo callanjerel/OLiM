@@ -522,7 +522,7 @@ const setLastId = (fieldName, err, res) => {
 
 /**
  * Helper function to check state on initialization and execute a callback
- * @param {function} callback Functoin to execute if initialization has completed
+ * @param {function} callback Function to execute if initialization has completed
  */
 const checkInitialized = (callback) => {
     if (initializedChatRooms && initializedMessages && initializedUsers) {
@@ -533,7 +533,7 @@ const checkInitialized = (callback) => {
 
 /**
  * Initializes the "lastID" system to ensure all new data entering the database is unique
- * @param {function} callback The function run after initialization
+ * @param {function} callback Function to execute after initialization has completed
  */
 const init = (callback) => {
     chatRooms.get(true, {}, (err, res) => {
