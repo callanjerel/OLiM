@@ -4,14 +4,16 @@ const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
 
+//////////////////////////////  User ID  //////////////////////////////
+
 const getUserId = () => {
     let storedId = localStorage.getItem('user_id')
-    if (storedId) {
+    if (storedId && typeof(storedId) === 'number') {
         console.log(`user_id already stored: ${storedId}`)
-        return storedId.toString()
+        return storedId()
     }
-    storedId = Math.floor((Math.random() * 10000)).toString()
-    console.log(`user_id not stored, new id: ${storedId}`)
+    storedId = Math.floor((Math.random() * 10000))
+    console.log(`user_id not stored or not number, new id: ${storedId}`)
     localStorage.setItem('user_id', storedId)
     return storedId
 }
