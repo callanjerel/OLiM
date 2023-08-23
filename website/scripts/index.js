@@ -10,7 +10,9 @@ console.log(`Room id: ${roomId}`)
 
 socket.emit('join room', roomId)
 
-window.onbeforeunload(() => {socket.emit('leave room', roomId)})
+addEventListener('beforeunload', () => {
+    socket.emit('leave room', roomId)
+})
 
 //////////////////////////////  User ID  //////////////////////////////
 

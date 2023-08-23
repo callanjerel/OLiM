@@ -1,5 +1,27 @@
 const dal = require('./datahandler/datalayer.js')
 
+const checkChatRoomExists = (roomId) => {
+    dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        if (!result) {
+            dal.chatRooms.create(false, { admin_user_id:0, invite_code:roomId, messages:[], users:[] },
+                (err, result) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+                    if (result) {
+                        console.log("new room created in mongo")
+                    }
+                }
+            )
+        }
+    })
+}
+
 const addMetaData = (data) => {
     let date = new Date()
     data.timestamp = date.toISOString()
@@ -18,7 +40,7 @@ const recieveMessage = (data, io, roomId) => {
         }
         console.log("Message persisted")
         console.log(result)
-        dal.chatRooms.update(false, {invite_code:'asdf', id:1}, {$push: {messages:data.id}}, (err, result) => {
+        dal.chatRooms.update(false, {invite_code:roomId }, {$push: {messages:dal.lastId.messages}}, (err, result) => {
             if (err) {
                 console.error(err)
             }
@@ -28,40 +50,46 @@ const recieveMessage = (data, io, roomId) => {
     io.to(roomId).emit('chat message', data)
 }
 
-const sendMessageLog = (specificSocket) => {
+const sendMessageLog = (specificSocket, roomId) => {
     let messageLog = []
-    dal.chatRooms.get(false, {invite_code:'asdf', id:1}, (err, result) => {
+    dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
         if (err) {
             console.error(err)
             return
         }
         
-        if (result.message == null) {
+        if (!result) {
             return
         }
 
+        console.log(result.messages.length)
+
+        let completedCalls = 0;
+
         result.messages.forEach((messageId) => {
-            dal.messages.get(false, {id:messageId}, (err, result) => {
+            dal.messages.get(false, { id:messageId }, (err, messageResult) => {
+                completedCalls++
                 if (err) {
                     console.error(err)
                     return
                 }
-                messageLog.push(result)
+                messageLog.push(messageResult)
+                
+                if (completedCalls == result.messages.length) {
+                    specificSocket.emit('message log', messageLog)
+                }
             })
         })
-        if (messageLog.length > 0) {
-            specificSocket.emit('message log', messageLog)
-        }
     })
 }
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('user connected')
-        sendMessageLog(socket)
 
         socket.on('join room', (roomId) => {
             socket.join(roomId)
+            checkChatRoomExists(roomId)
             sendMessageLog(socket, roomId)
         })
 
