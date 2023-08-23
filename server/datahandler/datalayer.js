@@ -208,28 +208,6 @@ const chatRooms = {
             return
         }
 
-        // enforcing a data structure
-        const validKeys = [
-            {name: "admin_user_id", dataType: "number"},
-            {name: "invite_code", dataType: "string"},
-            {name: "password_hash", dataType: "string"},
-            {name: "users", dataType: "object"},
-            {name: "messages", dataType: "object"}
-        ]
-        const dataFormat = {}
-
-        for (let i = 0; i < validKeys.length; i++) {
-            let key = validKeys[i]
-            if (data.hasOwnProperty(key.name)) {
-                if (typeof data[key.name] !== key.dataType) {
-                    callback(new Error(`Value of key: 'chat_room.${key.name}' must be of type: '${key.dataType}'`), null)
-                    return
-                }
-
-                dataFormat[key.name] = data[key.name]
-            }
-        }
-
         update("chat_rooms", multipleDocs, filter, dataFormat, callback)
     },
     /**
@@ -330,22 +308,6 @@ const users = {
         if (typeof multipleDocs !== "boolean") {
             callback(new Error("Parameter: 'multipleDocs' must be of type: 'boolean'"), null)
             return
-        }
-
-        // enforcing a data structure
-        const validKeys = [{name: "username", dataType: "string"}]
-        const dataFormat = {}
-
-        for (let i = 0; i < validKeys.length; i++) {
-            let key = validKeys[i]
-            if (data.hasOwnProperty(key.name)) {
-                if (typeof data[key.name] !== key.dataType) {
-                    callback(new Error(`Value of key: 'user.${key.name}' must be of type: '${key.dataType}'`), null)
-                    return
-                }
-
-                dataFormat[key.name] = data[key.name]
-            }
         }
 
         update("users", multipleDocs, filter, dataFormat, callback)
@@ -454,22 +416,6 @@ const messages = {
         if (typeof multipleDocs !== "boolean") {
             callback(new Error("Parameter: 'multipleDocs' must be of type: 'boolean'"), null)
             return
-        }
-
-        // enforcing a data structure
-        const validKeys = [{name: "content", dataType: "string"}]
-        const dataFormat = {}
-
-        for (let i = 0; i < validKeys.length; i++) {
-            let key = validKeys[i]
-            if (data.hasOwnProperty(key.name)) {
-                if (typeof data[key.name] !== key.dataType) {
-                    callback(new Error(`Value of key: 'message.${key.name}' must be of type: '${key.dataType}'`), null)
-                    return
-                }
-
-                dataFormat[key.name] = data[key.name]
-            }
         }
 
         update("messages", multipleDocs, filter, dataFormat, callback)
