@@ -4,18 +4,26 @@ const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
 
+//////////////////////////////  Room Setup  //////////////////////////////
+const roomId = window.location.pathname.replace('/', '')
+console.log(`Room id: ${roomId}`)
+
+socket.emit('join room', roomId)
+
+window.onbeforeunload(() => {socket.emit('leave room', roomId)})
+
 //////////////////////////////  User ID  //////////////////////////////
 
 const getUserId = () => {
-    let storedId = localStorage.getItem('user_id')
-    if (storedId && typeof(storedId) === 'number') {
-        console.log(`user_id already stored: ${storedId}`)
-        return storedId()
+    let storedUserId = localStorage.getItem('user_id')
+    if (storedUserId) {
+        console.log(`user_id already stored: ${storedUserId}`)
+        return Number(storedUserId)
     }
-    storedId = Math.floor((Math.random() * 10000))
-    console.log(`user_id not stored or not number, new id: ${storedId}`)
-    localStorage.setItem('user_id', storedId)
-    return storedId
+    storedUserId = Math.floor((Math.random() * 10000))
+    console.log(`user_id not stored or not number, new id: ${storedUserId}`)
+    localStorage.setItem('user_id', storedUserId)
+    return Number(storedUserId)
 }
 
 const userId = getUserId() 
@@ -86,11 +94,10 @@ const sendMessage = (content) => {
     }
     let data = {
         'id':null,
-        'user_id':userId, // <- This needs to be converted to an int in the future, when liam finished dal update
-        'timestamp':null,
+        'user_id':userId,
         'content':content
     }
-    socket.emit('chat message', data)
+    socket.emit('chat message', data, roomId)
 }
 
 // On sendButton click, send the message to the server
