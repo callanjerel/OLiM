@@ -10,7 +10,8 @@ const dal = require('./datahandler/datalayer')
 dal.init(() => {
     app.use(express.static(path.resolve('../website')))
 
-    app.get('/', (req, res) => {
+    app.get('/:id', (req, res) => {
+        console.log(req.params.id)
         res.sendFile(path.resolve('../website/index.html'))
     })
     
