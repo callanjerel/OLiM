@@ -4,6 +4,11 @@ const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
 
+//Disables chat functionality before reenabling it when password is entered
+form.classList.add('dulled')
+input.disabled = true
+sendButton.disabled = true
+
 //////////////////////////////  Room Setup  //////////////////////////////
 const roomId = window.location.pathname.replace('/', '')
 console.log(`Room id: ${roomId}`)
@@ -38,6 +43,9 @@ passwordCheckButton.onclick = () => {
     socket.on('join room', (passwordCorrect) => {
         if (passwordCorrect) {
             modal.style.display = "none"
+            form.classList.remove('dulled')
+            input.disabled = false
+            sendButton.disabled = false
         } else {
             alert("Incorrect password!")
         }
