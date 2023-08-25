@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Chatroom</title>
+    <link rel="stylesheet" href="styles/homepage.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create a New Chatroom</h1>
+        <form id="chatroomForm">
+            <label for="url">Invite Code: </label>
+            <input type="text" id="url" pattern="^[A-Za-z0-9]+$" required>
+            
+            <label for="name">Name of the room: </label>
+            <input type="text" id="name" required>
+            
+            <label for="password">Password (only letters and numbers): </label>
+            <input type="password" id="password" pattern="^[A-Za-z0-9]+$" required>
+            
+            <button type="submit">Create</button>
+        </form>
+    </div>
+    <script src="scripts/homepage.js"></script>
+</body>
+</html>

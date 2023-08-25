@@ -1,24 +1,23 @@
 const dal = require('./datahandler/datalayer.js')
 
-const checkChatRoomExists = (roomId) => {
+const checkRoomExists = (roomId, callback = () => {}) => {
     dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
         if (err) {
             console.error(err)
             return
         }
-        if (!result) {
-            dal.chatRooms.create(false, { admin_user_id:0, invite_code:roomId, messages:[], users:[] },
-                (err, result) => {
-                    if (err) {
-                        console.error(err)
-                        return
-                    }
-                    if (result) {
-                        console.log("new room created in mongo")
-                    }
-                }
-            )
+        callback(Boolean(result))
+    })
+}
+
+const checkRoomPassword = async (roomId, roomPassword, callback) => {
+    await dal.chatRooms.get(false, { invite_code:roomId, password_hash:roomPassword }, (err, result) => {
+        if (err) {
+            console.error(err)
+            return
         }
+        
+        return Boolean(result)
     })
 }
 
@@ -37,14 +36,15 @@ const recieveMessage = (data, io, roomId) => {
         }
         if (!result.acknowledged) {
             return
-        }
+        } 
         console.log("Message persisted")
-        console.log(result)
-        dal.chatRooms.update(false, {invite_code:roomId }, {$push: {messages:dal.lastId.messages}}, (err, result) => {
+        dal.chatRooms.update(false, { invite_code:roomId }, { $push: { messages:dal.lastId.messages } }, (err, result) => {
             if (err) {
                 console.error(err)
             }
-            console.log(result)
+            if (result.acknowledged) {
+                console.log("MessageId stored")
+            }
         })
     })
     io.to(roomId).emit('chat message', data)
@@ -86,11 +86,21 @@ const sendMessageLog = (specificSocket, roomId) => {
 module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('user connected')
+    
+        socket.on('room exists', (roomId) => {
+            checkRoomExists(roomId, (isRoomExists) => {
+                socket.emit('room exists', isRoomExists)
+            })
+        })
 
-        socket.on('join room', (roomId) => {
-            socket.join(roomId)
-            checkChatRoomExists(roomId)
-            sendMessageLog(socket, roomId)
+        socket.on('join room', (roomId, roomPassword) => {
+            if (checkRoomPassword(roomId, roomPassword)) {
+                socket.join(roomId)
+                sendMessageLog(socket, roomId)
+                socket.emit('join room', true)
+            } else {
+                socket.emit('join room', false)
+            }
         })
 
         socket.on('leave room', (roomId) => {
