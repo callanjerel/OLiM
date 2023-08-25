@@ -6,11 +6,12 @@ const io = require('socket.io')(http)
 const sockethandler = require('./socket')
 const path = require('path')
 
-const newRoomRouter = require('./routes/newRoomRouter')
+const newRoomRouter = require('./routes/homePageRouter')
 const chatRoomRouter = require('./routes/chatRoomRouter')
 
 const dal = require('./datahandler/datalayer')
 dal.init(() => {
+    app.use(express.json())
     app.use(express.static(path.resolve('../website')))
 
     app.use('/new', newRoomRouter)
