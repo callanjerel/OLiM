@@ -8,17 +8,47 @@ const input = document.getElementById('message-input');
 const roomId = window.location.pathname.replace('/', '')
 console.log(`Room id: ${roomId}`)
 
-socket.emit('join room', roomId)
+socket.emit('room exists', roomId)
+
+socket.on('room exists', (roomExists) => {
+    if (!roomExists) {
+        window.location.replace('http://localhost:6060/')
+    }
+})
 
 addEventListener('beforeunload', () => {
     socket.emit('leave room', roomId)
 })
+
 
 // Update chatroom title from local storage
 const chatroomTitleElement = document.getElementById('chatroomTitle');
 const chatroomName = sessionStorage.getItem('chatroomName');
 if (chatroomName) {
     chatroomTitleElement.textContent = chatroomName;
+}
+////////////////////////////// Password Modal /////////////////////////////
+const modal = document.getElementById('passwordModal')
+const closeButton = document.getElementsByClassName('close')[0]
+const passwordCheckButton = document.getElementById('submitPassword')
+
+window.onload = () => {
+    modal.style.display = "block"
+}
+
+// Check the password when the submit button is clicked
+passwordCheckButton.onclick = () => {
+    const inputPassword = document.getElementById('passwordInput').value
+
+    socket.emit('join room', roomId, inputPassword)
+
+    socket.on('join room', (passwordCorrect) => {
+        if (passwordCorrect) {
+            modal.style.display = "none"
+        } else {
+            alert("Incorrect password!")
+        }
+    })
 }
 
 
