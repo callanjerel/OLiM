@@ -10,14 +10,15 @@ input.disabled = true
 sendButton.disabled = true
 
 //////////////////////////////  Room Setup  //////////////////////////////
-const roomId = window.location.pathname.replace('/', '')
+console.log(window.location.pathname)
+const roomId = window.location.pathname.replace('/chatroom/', '')
 console.log(`Room id: ${roomId}`)
 
 socket.emit('room exists', roomId)
 
 socket.on('room exists', (roomExists) => {
     if (!roomExists) {
-        window.location.replace('http://localhost:6060/')
+        window.location.replace('http://localhost:6060/new')
     }
 })
 
@@ -88,6 +89,9 @@ const formatDate = (isoString) => {
 }
 
 const displayMessage = (data) => {
+    if (data == null) {
+        return
+    }
     console.log(`Received: ${data.user_id}: ${data.content}`)
     // Format date for local time
     const formattedDate = formatDate(data.timestamp)

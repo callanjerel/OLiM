@@ -6,18 +6,17 @@ const io = require('socket.io')(http)
 const sockethandler = require('./socket')
 const path = require('path')
 
+const newRoomRouter = require('./routes/newRoomRouter')
+const chatRoomRouter = require('./routes/chatRoomRouter')
+
 const dal = require('./datahandler/datalayer')
 dal.init(() => {
     app.use(express.static(path.resolve('../website')))
 
-    app.get('/', (req, res) => {
-        console.log('imagine a home page')
-        res.sendStatus(404)
-    })
-
-    app.get('/:id', (req, res) => {
-        console.log(req.params.id)
-        res.sendFile(path.resolve('../website/index.html'))
+    app.use('/new', newRoomRouter)
+    app.get('/chatroom/:id', chatRoomRouter)
+    app.use((req, res) => {
+        res.sendStatus(404).sendFile(path.resolve('../website/404.html'))
     })
     
     sockethandler(io)
