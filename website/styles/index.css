@@ -81,3 +81,9 @@ a{
     width: 30%;
     text-align: center;
 }
+
+/* dulled class (to add to the form when the password modal is up */
+.dulled {
+    opacity: 0.5;
+    pointer-events: none;
+}

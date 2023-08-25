@@ -4,15 +4,21 @@ const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
 
+//Disables chat functionality before reenabling it when password is entered
+form.classList.add('dulled')
+input.disabled = true
+sendButton.disabled = true
+
 //////////////////////////////  Room Setup  //////////////////////////////
-const roomId = window.location.pathname.replace('/', '')
+console.log(window.location.pathname)
+const roomId = window.location.pathname.replace('/chatroom/', '')
 console.log(`Room id: ${roomId}`)
 
 socket.emit('room exists', roomId)
 
 socket.on('room exists', (roomExists) => {
     if (!roomExists) {
-        window.location.replace('http://localhost:6060/')
+        window.location.replace('http://localhost:6060/new')
     }
 })
 
@@ -38,6 +44,9 @@ passwordCheckButton.onclick = () => {
     socket.on('join room', (passwordCorrect) => {
         if (passwordCorrect) {
             modal.style.display = "none"
+            form.classList.remove('dulled')
+            input.disabled = false
+            sendButton.disabled = false
         } else {
             alert("Incorrect password!")
         }
@@ -80,6 +89,9 @@ const formatDate = (isoString) => {
 }
 
 const displayMessage = (data) => {
+    if (data == null) {
+        return
+    }
     console.log(`Received: ${data.user_id}: ${data.content}`)
     // Format date for local time
     const formattedDate = formatDate(data.timestamp)
