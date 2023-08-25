@@ -128,7 +128,6 @@ const get = (cacheName, multipleDocs, filter, callback) => {
     }
 }
 
-// TODO: add update logic
 const update = (cacheName, multipleDocs, filter, data, callback) => {
     if (typeof cacheName !== 'string') {
         callback(new Error("Parameter: 'cacheName' must be of type: 'string'"), null)
@@ -172,9 +171,10 @@ const update = (cacheName, multipleDocs, filter, data, callback) => {
         return
     }
 
-    for (let i = 0; i < filteredData.length; i++) {
-        result += updateItem(filteredData[i], data)
-    }
+    for (let i = 0; i < filteredData.length-1; i++) {   // JS is modifying every object on the first iteration
+        result += updateItem(filteredData[i], data)     // even though the objects were created separately
+    }                                                   // using object literal (they shouldn't use the same reference)
+    
     callback(null, {
         objects_affected: result
     })
@@ -245,8 +245,8 @@ const chatRooms = {
     get: (multipleDocs, filter, callback) => {
         get("chat_rooms", multipleDocs, filter, callback)
     },
-    update: () => {
-
+    update: (multipleDocs, filter, data, callback) => {
+        update("chat_rooms", multipleDocs, filter, data, callback)
     },
     remove: (multipleDocs, filter, callback) => {
         remove("chat_rooms", multipleDocs, filter, callback)
@@ -263,8 +263,8 @@ const users = {
     get: (multipleDocs, filter, callback) => {
         get("chat_rooms", multipleDocs, filter, callback)
     },
-    update: () => {
-
+    update: (multipleDocs, filter, data, callback) => {
+        update("users", multipleDocs, filter, data, callback)
     },
     remove: (multipleDocs, filter, callback) => {
         remove("chat_rooms", multipleDocs, filter, callback)
@@ -281,8 +281,8 @@ const messages = {
     get: (multipleDocs, filter, callback) => {
         get("chat_rooms", multipleDocs, filter, callback)
     },
-    update: () => {
-
+    update: (multipleDocs, filter, data, callback) => {
+        update("messages", multipleDocs, filter, data, callback)
     },
     remove: (multipleDocs, filter, callback) => {
         remove("chat_rooms", multipleDocs, filter, callback)
@@ -292,5 +292,8 @@ const messages = {
 module.exports = {
     chatRooms,
     users,
-    messages
+    messages,
+    chatRoomsCache,
+    usersCache,
+    messagesCache
 }
