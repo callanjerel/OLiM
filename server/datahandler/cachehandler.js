@@ -2,22 +2,7 @@ const chatRoomsCache = []
 const usersCache = []
 const messagesCache = []
 
-const filterCache = (cacheName, filter) => {
-    let cache
-    switch (cacheName) {
-        case "chat_rooms":
-            cache = chatRoomsCache
-            break;
-        case "users":
-            cache = usersCache
-            break;
-        case "messages":
-            cache = messagesCache
-            break;
-        default:
-            return null
-    }
-
+const filterCache = (cache, filter) => {
     let result = []
     for (let i = 0; i < cache.length; i++) {
         let item = cache[i]
@@ -35,6 +20,28 @@ const filterCache = (cacheName, filter) => {
         }
     }
 
+    return result
+}
+
+const updateItem = (cacheData, updateData) => {
+    let result = 0
+    for (let aggregate in updateData) {
+        let aggregateData = updateData[aggregate]
+
+        if (aggregate == "$set") {
+            for (let updateProp in aggregateData) {
+                cacheData[updateProp] = aggregateData[updateProp]
+                result = 1
+            }
+        } else if (aggregate == "$push") {
+            for (let updateProp in aggregateData) {
+                if (Array.isArray(cacheData[updateProp])) {
+                    cacheData[updateProp].push(aggregateData[updateProp])
+                    result = 1
+                }
+            }
+        }
+    }
     return result
 }
 
@@ -108,7 +115,7 @@ const get = (cacheName, multipleDocs, filter, callback) => {
             return
     }
 
-    let data = filterCache(cacheName, filter)
+    let data = filterCache(cache, filter)
     if (multipleDocs) {
         callback(null, data)
         return
@@ -121,7 +128,6 @@ const get = (cacheName, multipleDocs, filter, callback) => {
     }
 }
 
-// TODO: add update logic
 const update = (cacheName, multipleDocs, filter, data, callback) => {
     if (typeof cacheName !== 'string') {
         callback(new Error("Parameter: 'cacheName' must be of type: 'string'"), null)
@@ -148,7 +154,30 @@ const update = (cacheName, multipleDocs, filter, data, callback) => {
             return
     }
 
+    let filteredData = filterCache(cache, filter)
+    let result = 0
+    if (filteredData.length == 0) {
+        callback(null, {
+            objects_affected: result
+        })
+        return
+    }
+
+    if (!multipleDocs) {
+        result = updateItem(filteredData[0], data)
+        callback(null, {
+            objects_affected: result
+        })
+        return
+    }
+
+    for (let i = 0; i < filteredData.length-1; i++) {   // JS is modifying every object on the first iteration
+        result += updateItem(filteredData[i], data)     // even though the objects were created separately
+    }                                                   // using object literal (they shouldn't use the same reference)
     
+    callback(null, {
+        objects_affected: result
+    })
 }
 
 const remove = (cacheName, multipleDocs, filter, callback) => {
@@ -177,7 +206,7 @@ const remove = (cacheName, multipleDocs, filter, callback) => {
             return
     }
 
-    let data = filterCache(cacheName, filter)
+    let data = filterCache(cache, filter)
     if (!multipleDocs) {
         let index = cache.indexOf(data[0])
 
@@ -216,8 +245,8 @@ const chatRooms = {
     get: (multipleDocs, filter, callback) => {
         get("chat_rooms", multipleDocs, filter, callback)
     },
-    update: () => {
-
+    update: (multipleDocs, filter, data, callback) => {
+        update("chat_rooms", multipleDocs, filter, data, callback)
     },
     remove: (multipleDocs, filter, callback) => {
         remove("chat_rooms", multipleDocs, filter, callback)
@@ -234,8 +263,8 @@ const users = {
     get: (multipleDocs, filter, callback) => {
         get("chat_rooms", multipleDocs, filter, callback)
     },
-    update: () => {
-
+    update: (multipleDocs, filter, data, callback) => {
+        update("users", multipleDocs, filter, data, callback)
     },
     remove: (multipleDocs, filter, callback) => {
         remove("chat_rooms", multipleDocs, filter, callback)
@@ -252,8 +281,8 @@ const messages = {
     get: (multipleDocs, filter, callback) => {
         get("chat_rooms", multipleDocs, filter, callback)
     },
-    update: () => {
-
+    update: (multipleDocs, filter, data, callback) => {
+        update("messages", multipleDocs, filter, data, callback)
     },
     remove: (multipleDocs, filter, callback) => {
         remove("chat_rooms", multipleDocs, filter, callback)
@@ -263,5 +292,8 @@ const messages = {
 module.exports = {
     chatRooms,
     users,
-    messages
+    messages,
+    chatRoomsCache,
+    usersCache,
+    messagesCache
 }

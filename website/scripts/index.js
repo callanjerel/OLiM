@@ -4,16 +4,59 @@ const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
 
-const getUserId = () => {
-    let storedId = localStorage.getItem('user_id')
-    if (storedId) {
-        console.log(`user_id already stored: ${storedId}`)
-        return storedId.toString()
+//////////////////////////////  Room Setup  //////////////////////////////
+const roomId = window.location.pathname.replace('/', '')
+console.log(`Room id: ${roomId}`)
+
+socket.emit('room exists', roomId)
+
+socket.on('room exists', (roomExists) => {
+    if (!roomExists) {
+        window.location.replace('http://localhost:6060/')
     }
-    storedId = Math.floor((Math.random() * 10000)).toString()
-    console.log(`user_id not stored, new id: ${storedId}`)
-    localStorage.setItem('user_id', storedId)
-    return storedId
+})
+
+addEventListener('beforeunload', () => {
+    socket.emit('leave room', roomId)
+})
+
+////////////////////////////// Password Modal /////////////////////////////
+const modal = document.getElementById('passwordModal')
+const closeButton = document.getElementsByClassName('close')[0]
+const passwordCheckButton = document.getElementById('submitPassword')
+
+window.onload = () => {
+    modal.style.display = "block"
+}
+
+// Check the password when the submit button is clicked
+passwordCheckButton.onclick = () => {
+    const inputPassword = document.getElementById('passwordInput').value
+
+    socket.emit('join room', roomId, inputPassword)
+
+    socket.on('join room', (passwordCorrect) => {
+        if (passwordCorrect) {
+            modal.style.display = "none"
+        } else {
+            alert("Incorrect password!")
+        }
+    })
+}
+
+
+//////////////////////////////  User ID  //////////////////////////////
+
+const getUserId = () => {
+    let storedUserId = localStorage.getItem('user_id')
+    if (storedUserId) {
+        console.log(`user_id already stored: ${storedUserId}`)
+        return Number(storedUserId)
+    }
+    storedUserId = Math.floor((Math.random() * 10000))
+    console.log(`user_id not stored or not number, new id: ${storedUserId}`)
+    localStorage.setItem('user_id', storedUserId)
+    return Number(storedUserId)
 }
 
 const userId = getUserId() 
@@ -84,11 +127,10 @@ const sendMessage = (content) => {
     }
     let data = {
         'id':null,
-        'user_id':userId, // <- This needs to be converted to an int in the future, when liam finished dal update
-        'timestamp':null,
+        'user_id':userId,
         'content':content
     }
-    socket.emit('chat message', data)
+    socket.emit('chat message', data, roomId)
 }
 
 // On sendButton click, send the message to the server

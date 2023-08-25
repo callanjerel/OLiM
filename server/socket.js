@@ -1,41 +1,114 @@
 const dal = require('./datahandler/datalayer.js')
 
+const checkRoomExists = (roomId, callback = () => {}) => {
+    dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        callback(Boolean(result))
+    })
+}
+
+const checkRoomPassword = async (roomId, roomPassword, callback) => {
+    await dal.chatRooms.get(false, { invite_code:roomId, password_hash:roomPassword }, (err, result) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        
+        return Boolean(result)
+    })
+}
+
 const addMetaData = (data) => {
     let date = new Date()
     data.timestamp = date.toISOString()
 }
 
-module.exports = (io) => {
-    const recieveMessage = (data) => {
-        console.log("Message recieved: " + data.content)
-        addMetaData(data)
-        dal.messages.create(false, data, (err, result) => {
+const recieveMessage = (data, io, roomId) => {
+    console.log("Message recieved: " + data.content)
+    addMetaData(data)
+    dal.messages.create(false, data, (err, result) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        if (!result.acknowledged) {
+            return
+        } 
+        console.log("Message persisted")
+        dal.chatRooms.update(false, { invite_code:roomId }, { $push: { messages:dal.lastId.messages } }, (err, result) => {
             if (err) {
                 console.error(err)
-                return
             }
             if (result.acknowledged) {
-                console.log("Message persisted")
+                console.log("MessageId stored")
             }
         })
-        io.emit('chat message', data)
-    }
+    })
+    io.to(roomId).emit('chat message', data)
+}
 
-    const sendMessageLog = (specificSocket) => {
-        dal.messages.get(true, {}, (err, result) => {
-            if (err) {
-                console.error(err)
-                return
-            }
-            specificSocket.emit('message log', result)
+const sendMessageLog = (specificSocket, roomId) => {
+    let messageLog = []
+    dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        
+        if (!result) {
+            return
+        }
+
+        console.log(result.messages.length)
+
+        let completedCalls = 0;
+
+        result.messages.forEach((messageId) => {
+            dal.messages.get(false, { id:messageId }, (err, messageResult) => {
+                completedCalls++
+                if (err) {
+                    console.error(err)
+                    return
+                }
+                messageLog.push(messageResult)
+                
+                if (completedCalls == result.messages.length) {
+                    specificSocket.emit('message log', messageLog)
+                }
+            })
         })
-    }
+    })
+}
 
+module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('user connected')
-        sendMessageLog(socket)
-        socket.on('chat message', (data) => {
-            recieveMessage(data)
+    
+        socket.on('room exists', (roomId) => {
+            checkRoomExists(roomId, (isRoomExists) => {
+                socket.emit('room exists', isRoomExists)
+            })
+        })
+
+        socket.on('join room', (roomId, roomPassword) => {
+            if (checkRoomPassword(roomId, roomPassword)) {
+                socket.join(roomId)
+                sendMessageLog(socket, roomId)
+                socket.emit('join room', true)
+            } else {
+                socket.emit('join room', false)
+            }
+        })
+
+        socket.on('leave room', (roomId) => {
+            socket.leave(roomId)
+        })
+
+        socket.on('chat message', (data, roomId) => {
+            recieveMessage(data, io, roomId)
         })
     
         socket.on('disconnect', () => {

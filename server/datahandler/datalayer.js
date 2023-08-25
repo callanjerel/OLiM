@@ -208,7 +208,7 @@ const chatRooms = {
             return
         }
 
-        update("chat_rooms", multipleDocs, filter, dataFormat, callback)
+        update("chat_rooms", multipleDocs, filter, data, callback)
     },
     /**
      * Removes a chat room document(s) from the database
