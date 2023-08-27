@@ -1,7 +1,7 @@
 const db = require('./databasehandler')
 const cache = require('./cachehandler')
 
-const create = (collectionName, multipleDocs, data, callback) => {
+const create = async (collectionName, multipleDocs, data, callback) => {
     let dbCollection
     let cacheCollection
     switch (collectionName) {
@@ -39,7 +39,7 @@ const create = (collectionName, multipleDocs, data, callback) => {
     })
 }
 
-const get = (collectionName, multipleDocs, filter, callback) => {
+const get = async (collectionName, multipleDocs, filter, callback) => {
     let dbCollection
     let cacheCollection
     switch (collectionName) {
@@ -87,7 +87,7 @@ const get = (collectionName, multipleDocs, filter, callback) => {
     })
 }
 
-const update = (collectionName, multipleDocs, filter, data, callback) => {
+const update = async (collectionName, multipleDocs, filter, data, callback) => {
     let dbCollection
     let cacheCollection
     switch (collectionName) {
@@ -130,7 +130,7 @@ const update = (collectionName, multipleDocs, filter, data, callback) => {
     })
 }
 
-const remove = (collectionName, multipleDocs, filter, callback) => {
+const remove = async (collectionName, multipleDocs, filter, callback) => {
     let dbCollection
     let cacheCollection
     switch (collectionName) {
@@ -168,53 +168,56 @@ const remove = (collectionName, multipleDocs, filter, callback) => {
     })
 }
 
-const chatRooms = {
-    nextId: db.chatRooms.nextId,
-    create: (multipleDocs, data, callback) => {
-        create("chat_rooms", multipleDocs, data, callback)
-    },
-    get: (multipleDocs, filter, callback) => {
-        get("chat_rooms", multipleDocs, filter, callback)
-    },
-    update: (multipleDocs, filter, data, callback) => {
-        update("chat_rooms", multipleDocs, filter, data, callback)
-    },
-    remove: (multipleDocs, filter, callback) => {
-        remove("chat_rooms", multipleDocs, filter, callback)
-    }
-}
+// const chatRooms = {
+//     nextId: db.chatRooms.nextId,
+//     create: (multipleDocs, data, callback) => {
+//         create("chat_rooms", multipleDocs, data, callback)
+//     },
+//     get: (multipleDocs, filter, callback) => {
+//         get("chat_rooms", multipleDocs, filter, callback)
+//     },
+//     update: (multipleDocs, filter, data, callback) => {
+//         update("chat_rooms", multipleDocs, filter, data, callback)
+//     },
+//     remove: (multipleDocs, filter, callback) => {
+//         remove("chat_rooms", multipleDocs, filter, callback)
+//     }
+// }
+const chatRooms = db.chatRooms
 
-const users = {
-    nextId: db.users.nextId,
-    create: (multipleDocs, data, callback) => {
-        create("users", multipleDocs, data, callback)
-    },
-    get: (multipleDocs, filter, callback) => {
-        get("users", multipleDocs, filter, callback)
-    },
-    update: (multipleDocs, filter, data, callback) => {
-        update("users", multipleDocs, filter, data, callback)
-    },
-    remove: (multipleDocs, filter, callback) => {
-        remove("users", multipleDocs, filter, callback)
-    }
-}
+// const users = {
+//     nextId: db.users.nextId,
+//     create: (multipleDocs, data, callback) => {
+//         create("users", multipleDocs, data, callback)
+//     },
+//     get: (multipleDocs, filter, callback) => {
+//         get("users", multipleDocs, filter, callback)
+//     },
+//     update: (multipleDocs, filter, data, callback) => {
+//         update("users", multipleDocs, filter, data, callback)
+//     },
+//     remove: (multipleDocs, filter, callback) => {
+//         remove("users", multipleDocs, filter, callback)
+//     }
+// }
+const users = db.users
 
-const messages = {
-    nextId: db.messages.nextId,
-    create: (multipleDocs, data, callback) => {
-        create("messages", multipleDocs, data, callback)
-    },
-    get: (multipleDocs, filter, callback) => {
-        get("messages", multipleDocs, filter, callback)
-    },
-    update: (multipleDocs, filter, data, callback) => {
-        update("messages", multipleDocs, filter, data, callback)
-    },
-    remove: (multipleDocs, filter, callback) => {
-        remove("messages", multipleDocs, filter, callback)
-    }
-}
+// const messages = {
+//     nextId: db.messages.nextId,
+//     create: (multipleDocs, data, callback) => {
+//         create("messages", multipleDocs, data, callback)
+//     },
+//     get: (multipleDocs, filter, callback) => {
+//         get("messages", multipleDocs, filter, callback)
+//     },
+//     update: (multipleDocs, filter, data, callback) => {
+//         update("messages", multipleDocs, filter, data, callback)
+//     },
+//     remove: (multipleDocs, filter, callback) => {
+//         remove("messages", multipleDocs, filter, callback)
+//     }
+// }
+const messages = db.messages
 
 module.exports = {
     chatRooms,
@@ -222,5 +225,5 @@ module.exports = {
     messages,
     lastId: db.lastId,
     init: db.init,
-    sortByField: db.sortByField
+    sortByField: db.sortByField,
 }
