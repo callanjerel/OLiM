@@ -6,6 +6,8 @@ const filterCache = (cache, filter) => {
     let result = []
     for (let i = 0; i < cache.length; i++) {
         let item = cache[i]
+        if (item === null)
+            break
 
         let valid = true
         for (let property in filter) {
@@ -45,7 +47,7 @@ const updateItem = (cacheData, updateData) => {
     return result
 }
 
-const put = (cacheName, multipleDocs, data, callback) => {
+const put = async (cacheName, multipleDocs, data, callback) => {
     if (typeof cacheName !== 'string') {
         callback(new Error("Parameter: 'cacheName' must be of type: 'string'"), null)
         return
@@ -89,7 +91,7 @@ const put = (cacheName, multipleDocs, data, callback) => {
     })
 }
 
-const get = (cacheName, multipleDocs, filter, callback) => {
+const get = async (cacheName, multipleDocs, filter, callback) => {
     if (typeof cacheName !== 'string') {
         callback(new Error("Parameter: 'cacheName' must be of type: 'string'"), null)
         return
@@ -124,11 +126,11 @@ const get = (cacheName, multipleDocs, filter, callback) => {
     if (data.length > 0) {
         callback(null, data[0])
     } else {
-        callback(null, [])
+        callback(null, undefined)
     }
 }
 
-const update = (cacheName, multipleDocs, filter, data, callback) => {
+const update = async (cacheName, multipleDocs, filter, data, callback) => {
     if (typeof cacheName !== 'string') {
         callback(new Error("Parameter: 'cacheName' must be of type: 'string'"), null)
         return
@@ -180,7 +182,7 @@ const update = (cacheName, multipleDocs, filter, data, callback) => {
     })
 }
 
-const remove = (cacheName, multipleDocs, filter, callback) => {
+const remove = async (cacheName, multipleDocs, filter, callback) => {
     if (typeof cacheName !== 'string') {
         callback(new Error("Parameter: 'cacheName' must be of type: 'string'"), null)
         return
