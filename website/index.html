@@ -7,21 +7,22 @@
         <script src="/socket.io/socket.io.js" defer></script>
         <script src="/scripts/index.js" defer></script>
 
-        <p id="title"><a href="homepage.html">OLIM</a></p>
+        <h1 id="chatroomTitle"><a href="homepage.html">OLIM</a></h1>
         <hr>
         <div id="passwordModal" class="modal">
             <div class="modal-content">
                 <p>Enter Password to Join Chatroom:</p>
-                <input type="password" id="passwordInput">
-                <button id="submitPassword">Submit</button>
+                <input type="password" class="message-input" id="passwordInput">
+                <button id="submitPassword" class ="b" >Submit</button>
             </div>
         </div>
         <form id="message-form">    
             <ul id="messages">
             </ul>   
         
-            <input id="message-input" type="text">
-            <button id="b" type="button">Send</button> 
+            <input id="message-input" class="message-input" type="text">
+            <button class="b" id="b" type="button">Send</button> 
         </form>
+        <p id="room-name"></p>
     </body>
 </html>

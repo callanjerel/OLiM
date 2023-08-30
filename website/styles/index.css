@@ -34,20 +34,24 @@ a{
     color:inherit;
     text-decoration:none;
 }
-#message-input {
+.message-input {
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #a0a0a0;
     border-radius: 4px;
     margin-right: 10px;
 }
 
-#b {
+.b {
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
     padding: 8px 12px;
     cursor: pointer;
+}
+
+#chatroomTitle{
+   text-align: center;
 }
 #title{
     text-align: center;
@@ -75,9 +79,10 @@ a{
 .modal-content {
     position: relative;
     background-color: #fefefe;
+    border-radius: 25px;
+    border: 2px solid #007bff;
     margin: 15% auto;
     padding: 20px;
-    border: 1px solid #888;
     width: 30%;
     text-align: center;
 }
@@ -86,4 +91,6 @@ a{
 .dulled {
     opacity: 0.5;
     pointer-events: none;
+    
 }
+
