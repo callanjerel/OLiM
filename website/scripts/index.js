@@ -174,3 +174,14 @@ const messagesContainer = document.getElementById("messages");
 function scrollToBottom() {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
+
+//theme code
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+const messagesList = document.getElementById('messages');
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-theme');
+    messagesList.classList.toggle('dark-theme'); // Toggle class for messages
+});
