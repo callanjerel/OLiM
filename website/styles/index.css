@@ -2,22 +2,52 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --message-bg-color: #e0e0e0; /* Default background color for messages */
+   
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
+body.dark-theme {
+    --background-color: #333333;
+    --text-color: #ffffff;
+    --message-bg-color: #444444; /* Dark background color for messages */
 
-#messages {
+}
+.theme-toggle {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+ul#messages {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow-y: auto;
-    max-height: calc(100vh - 100px); /* Adjust this value as needed */
+    max-height: calc(100vh - 150px); /* Adjust this value as needed */
+    background-color: var(--background-color); /* Set background color for message container */
+
 }
 
-#messages li {
+ul#messages li {
+    background-color: var(--message-bg-color);
     margin-bottom: 10px;
     padding: 5px;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    
+    border: 1px solid #ccc;    
+}
+
+ul#messages li {
+background: var(--message-bg-color);  
+  margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;    
 }
 
 #message-form {
@@ -25,7 +55,7 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #f0f0f0;
+    background-color: var(--background-color);
     padding: 10px;
     box-sizing: border-box;
     box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
