@@ -36,6 +36,13 @@ addEventListener('beforeunload', () => {
     socket.emit('leave room', roomId)
 })
 
+
+// Update chatroom title from local storage
+const chatroomTitleElement = document.getElementById('chatroomTitle');
+const chatroomName = sessionStorage.getItem('chatroomName');
+if (chatroomName) {
+    chatroomTitleElement.textContent = chatroomName;
+}
 ////////////////////////////// Password Modal /////////////////////////////
 
 const modal = document.getElementById('passwordModal')
