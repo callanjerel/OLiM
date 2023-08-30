@@ -4,6 +4,7 @@ const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
 const roomNameElement = document.getElementById('title')
+let admin_user_id;
 
 //Disables chat functionality before reenabling it when password is entered
 
@@ -65,8 +66,9 @@ passwordCheckButton.onclick = () => {
 
     socket.emit('join room', roomId, passwordString, userId)
 
-    socket.on('join room', (passwordCorrect) => {
+    socket.on('join room', (passwordCorrect, adminUserId) => {
         if (passwordCorrect) {
+            admin_user_id = adminUserId || 0
             modal.style.display = "none"
             form.classList.remove('dulled')
         } else {
@@ -110,7 +112,7 @@ const displayMessage = (data) => {
 
     if (data.user_id === userId) {
         messageElement.innerHTML = `<div class="metadata">me (${data.user_id}) @ ${formattedDate}:</div><div class="messageContent">${data.content}</div>`;
-    } else if (data.user_id == 0) {
+    } else if (data.user_id == admin_user_id) {
         messageElement.innerHTML = `<div class="metadata"> announcement @ ${formattedDate}: user #${data.content}</div>`;
     } else {
         messageElement.innerHTML = `<div class="metadata"> (${data.user_id}) @ ${formattedDate}:</div><div class="messageContent">${data.content}</div>`;

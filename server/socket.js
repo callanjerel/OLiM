@@ -12,19 +12,24 @@ const checkRoomExists = (roomId, callback = () => {}) => {
 }
 
 const checkRoomPassword = (roomId, roomPassword, callback = () => {}) => {
-    dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
+    //this whole function is NOT good lmao
+    dal.chatRooms.get(false, { invite_code:roomId }, (err, roomResult) => {
         if (err) {
             console.error(err)
             return
         }
 
-        auth.validatePassword(roomPassword, result.password_hash, (err, result) => {
+        auth.validatePassword(roomPassword, roomResult.password_hash, (err, result) => {
             if (err) {
                 console.log(err)
                 callback(false)
                 return
             }
-            callback(Boolean(result))
+            if (result) {
+                callback(roomResult)
+            } else {
+                callback(false)
+            }
         })
     })
 }
@@ -111,9 +116,9 @@ module.exports = (io) => {
                     socket.join(roomId)
                     sendJoinAnnouncement(io, roomId, true, userId)
                     sendMessageLog(socket, roomId)
-                    socket.emit('join room', true)
+                    socket.emit('join room', true, result.admin_user_id)
                 } else {
-                    socket.emit('join room', false)
+                    socket.emit('join room', false, null)
                 }
             })
         })
