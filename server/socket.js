@@ -10,14 +10,14 @@ const checkRoomExists = (roomId, callback = () => {}) => {
     })
 }
 
-const checkRoomPassword = async (roomId, roomPassword, callback) => {
-    await dal.chatRooms.get(false, { invite_code:roomId, password_hash:roomPassword }, (err, result) => {
+const checkRoomPassword = (roomId, roomPassword, callback = () => {}) => {
+    dal.chatRooms.get(false, { invite_code:roomId, password_hash:roomPassword }, (err, result) => {
         if (err) {
             console.error(err)
             return
         }
-        
-        return Boolean(result)
+
+        callback(Boolean(result))
     })
 }
 
@@ -94,13 +94,15 @@ module.exports = (io) => {
         })
 
         socket.on('join room', (roomId, roomPassword) => {
-            if (checkRoomPassword(roomId, roomPassword)) {
+            checkRoomPassword(roomId, roomPassword, (result) => {
+            if (result) {
                 socket.join(roomId)
                 sendMessageLog(socket, roomId)
                 socket.emit('join room', true)
             } else {
                 socket.emit('join room', false)
             }
+            })
         })
 
         socket.on('leave room', (roomId) => {
