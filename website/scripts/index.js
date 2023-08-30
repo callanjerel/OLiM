@@ -3,22 +3,32 @@ const messageContainer = document.getElementById('messages');
 const form = document.getElementById('message-form');
 const sendButton = document.getElementById('b')
 const input = document.getElementById('message-input');
+const roomNameElement = document.getElementById('title')
 
 //Disables chat functionality before reenabling it when password is entered
+
 form.classList.add('dulled')
 input.disabled = true
 sendButton.disabled = true
 
 //////////////////////////////  Room Setup  //////////////////////////////
+
 console.log(window.location.pathname)
 const roomId = window.location.pathname.replace('/chatroom/', '')
 console.log(`Room id: ${roomId}`)
 
 socket.emit('room exists', roomId)
 
-socket.on('room exists', (roomExists) => {
+socket.on('room exists', (roomExists, roomName) => {
     if (!roomExists) {
         window.location.replace('http://localhost:6060/new')
+    } else {
+        if (roomName) {
+            roomNameElement.innerHTML = roomName
+            roomNameElement.addEventListener('click', () => {
+                navigator.clipboard.writeText(window.location.href)
+            })
+        }
     }
 })
 
@@ -27,6 +37,7 @@ addEventListener('beforeunload', () => {
 })
 
 ////////////////////////////// Password Modal /////////////////////////////
+
 const modal = document.getElementById('passwordModal')
 const closeButton = document.getElementsByClassName('close')[0]
 const passwordCheckButton = document.getElementById('submitPassword')
@@ -52,7 +63,6 @@ passwordCheckButton.onclick = () => {
         }
     })
 }
-
 
 //////////////////////////////  User ID  //////////////////////////////
 

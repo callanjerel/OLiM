@@ -25,7 +25,8 @@ router.post('/create', (req, res) => {
         dal.chatRooms.create(false, { 
             admin_user_id:0, 
             invite_code:params.invite_code, 
-            password_hash:params.password, 
+            password_hash:params.password,
+            name:params.name, 
             users:[], 
             messages:[] },
             (err, result) => {

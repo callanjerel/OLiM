@@ -49,9 +49,19 @@ a{
     padding: 8px 12px;
     cursor: pointer;
 }
+#title-box{
+    padding:5px;
+}
 #title{
     text-align: center;
+    margin:auto;
+    font-size:xx-large;
+    padding:10px 5px 5px 5px;
 }
+#title:hover{
+    cursor:pointer;
+}
+
 .metadata{
     color:rgb(119, 143, 143);
     font-size: smaller;
