@@ -137,7 +137,7 @@ const chatRooms = {
      * 
      * Required fields: "admin_user_id"
      * 
-     * Available fields: "admin_user_id", "invite_code", "password_hash", "users", "messages"
+     * Available fields: "name", "admin_user_id", "invite_code", "password_hash", "users", "messages"
      * 
      * @param {boolean} multipleDocs Specifies if multiple documents should be inserted
      * @param {object} data The document or array of documents to insert
@@ -166,6 +166,7 @@ const chatRooms = {
 
         const dataFormat = {
             id: chatRooms.nextId(),
+            name: data.name,
             admin_user_id: data.admin_user_id,
             invite_code: data.invite_code,
             password_hash: data.password_hash,

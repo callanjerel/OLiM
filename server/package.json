@@ -10,9 +10,10 @@
   "author": "Robert Shirts, Adrian Palacio Buelna, Liam Chevillard",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "socket.io": "^4.7.2",
-    "mongodb": "^5.7.0"
+    "mongodb": "^5.7.0",
+    "socket.io": "^4.7.2"
   }
 }
