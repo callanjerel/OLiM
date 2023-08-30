@@ -7,12 +7,18 @@ const checkRoomExists = (roomId, callback = () => {}) => {
             console.error(err)
             return
         }
-        callback(Boolean(result), result.name)
+        const isExists = Boolean(result)
+        console.log(`${roomId} exists: ${isExists}`)
+        if (isExists) {
+            callback(isExists, result.name)
+        } else {
+            callback(false, null)
+        }
     })
 }
 
 const checkRoomPassword = (roomId, roomPassword, callback = () => {}) => {
-    //this whole function is NOT good lmao
+    //this whole function is terrible lmao
     dal.chatRooms.get(false, { invite_code:roomId }, (err, roomResult) => {
         if (err) {
             console.error(err)

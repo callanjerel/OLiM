@@ -1,4 +1,5 @@
 const inviteElement = document.getElementById('url')
+const joinElement = document.getElementById('joinUrl')
 const passwordElement = document.getElementById('password')
 const nameElement = document.getElementById('name')
 
@@ -31,3 +32,13 @@ document.getElementById('chatroomForm').addEventListener('submit', function(even
         })
 });
 
+document.getElementById('joinroomForm').addEventListener('submit', function(event) {
+    event.preventDefault()
+    let joinCode = joinElement.value
+    joinCode = joinCode.replace('http://', '')
+    joinCode = joinCode.replace('localhost:6060', '')
+    joinCode = joinCode.replace('chatroom', '')
+    joinCode = joinCode.replace('/', '').trim()
+    joinElement.value = ''
+    window.location.replace(`http://localhost:6060/chatroom/${joinCode}`)   
+})
