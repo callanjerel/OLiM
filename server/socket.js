@@ -6,7 +6,9 @@ const checkRoomExists = (roomId, callback = () => {}) => {
             console.error(err)
             return
         }
-        callback(Boolean(result))
+        console.log(result)
+        console.log(`Room name: ${result.name}`)
+        callback(Boolean(result), result.name)
     })
 }
 
@@ -88,20 +90,20 @@ module.exports = (io) => {
         console.log('user connected')
     
         socket.on('room exists', (roomId) => {
-            checkRoomExists(roomId, (isRoomExists) => {
-                socket.emit('room exists', isRoomExists)
+            checkRoomExists(roomId, (isRoomExists, roomName) => {
+                socket.emit('room exists', isRoomExists, roomName)
             })
         })
 
         socket.on('join room', (roomId, roomPassword) => {
             checkRoomPassword(roomId, roomPassword, (result) => {
-            if (result) {
-                socket.join(roomId)
-                sendMessageLog(socket, roomId)
-                socket.emit('join room', true)
-            } else {
-                socket.emit('join room', false)
-            }
+                if (result) {
+                    socket.join(roomId)
+                    sendMessageLog(socket, roomId)
+                    socket.emit('join room', true)
+                } else {
+                    socket.emit('join room', false)
+                }
             })
         })
 

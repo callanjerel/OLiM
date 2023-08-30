@@ -2,15 +2,13 @@ const inviteElement = document.getElementById('url')
 const passwordElement = document.getElementById('password')
 const nameElement = document.getElementById('name')
 
-console.log(inviteElement.value)
-console.log(passwordElement.value)
-
 document.getElementById('chatroomForm').addEventListener('submit', function(event) {
     event.preventDefault()
 
     const roomData = {
         invite_code:inviteElement.value,
-        password:passwordElement.value
+        password:passwordElement.value,
+        name:nameElement.value
     }
 
     inviteElement.value = ""
