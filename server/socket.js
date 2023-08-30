@@ -1,4 +1,5 @@
 const dal = require('./datahandler/datalayer.js')
+const auth = require('./datahandler/auth.js')
 
 const checkRoomExists = (roomId, callback = () => {}) => {
     dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
@@ -6,20 +7,25 @@ const checkRoomExists = (roomId, callback = () => {}) => {
             console.error(err)
             return
         }
-        console.log(result)
-        console.log(`Room name: ${result.name}`)
         callback(Boolean(result), result.name)
     })
 }
 
 const checkRoomPassword = (roomId, roomPassword, callback = () => {}) => {
-    dal.chatRooms.get(false, { invite_code:roomId, password_hash:roomPassword }, (err, result) => {
+    dal.chatRooms.get(false, { invite_code:roomId }, (err, result) => {
         if (err) {
             console.error(err)
             return
         }
 
-        callback(Boolean(result))
+        auth.validatePassword(roomPassword, result.password_hash, (err, result) => {
+            if (err) {
+                console.log(err)
+                callback(false)
+                return
+            }
+            callback(Boolean(result))
+        })
     })
 }
 
@@ -38,14 +44,10 @@ const recieveMessage = (data, io, roomId) => {
         }
         if (!result.acknowledged) {
             return
-        } 
-        console.log("Message persisted")
+        }
         dal.chatRooms.update(false, { invite_code:roomId }, { $push: { messages:dal.lastId.messages } }, (err, result) => {
             if (err) {
                 console.error(err)
-            }
-            if (result.acknowledged) {
-                console.log("MessageId stored")
             }
         })
     })
@@ -63,8 +65,6 @@ const sendMessageLog = (specificSocket, roomId) => {
         if (!result) {
             return
         }
-
-        console.log(result.messages.length)
 
         let completedCalls = 0;
 
@@ -85,6 +85,15 @@ const sendMessageLog = (specificSocket, roomId) => {
     })
 }
 
+const sendJoinAnnouncement = (io, roomId, isJoin, userId) => {
+    let announcementMessage = {
+        user_id:0,
+        content: isJoin ? `${userId} joined room` : `${userId} left room`
+    }
+    addMetaData(announcementMessage)
+    io.to(roomId).emit('chat message', announcementMessage)
+}
+
 module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('user connected')
@@ -95,10 +104,12 @@ module.exports = (io) => {
             })
         })
 
-        socket.on('join room', (roomId, roomPassword) => {
+        socket.on('join room', (roomId, roomPassword, userId) => {
             checkRoomPassword(roomId, roomPassword, (result) => {
                 if (result) {
+                    console.log(`User joined room ${roomId}`)
                     socket.join(roomId)
+                    sendJoinAnnouncement(io, roomId, true, userId)
                     sendMessageLog(socket, roomId)
                     socket.emit('join room', true)
                 } else {
@@ -107,7 +118,8 @@ module.exports = (io) => {
             })
         })
 
-        socket.on('leave room', (roomId) => {
+        socket.on('leave room', (roomId, userId) => {
+            sendJoinAnnouncement(io, roomId, false, userId)
             socket.leave(roomId)
         })
 

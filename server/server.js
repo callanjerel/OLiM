@@ -16,6 +16,9 @@ dal.init(() => {
 
     app.use('/new', newRoomRouter)
     app.get('/chatroom/:id', chatRoomRouter)
+    app.use('', (req, res) => {
+        res.redirect('/new')
+    })
     app.use((req, res) => {
         res.sendStatus(404).sendFile(path.resolve('../website/404.html'))
     })

@@ -30,8 +30,23 @@ socket.on('room exists', (roomExists, roomName) => {
     }
 })
 
+
+const getUserId = () => {
+    let storedUserId = localStorage.getItem('user_id')
+    if (storedUserId) {
+        console.log(`user_id already stored: ${storedUserId}`)
+        return Number(storedUserId)
+    }
+    storedUserId = Math.floor((Math.random() * 10000))
+    console.log(`user_id not stored or not number, new id: ${storedUserId}`)
+    localStorage.setItem('user_id', storedUserId)
+    return Number(storedUserId)
+}
+
+const userId = getUserId() 
+
 addEventListener('beforeunload', () => {
-    socket.emit('leave room', roomId)
+    socket.emit('leave room', roomId, userId)
 })
 
 ////////////////////////////// Password Modal /////////////////////////////
@@ -48,7 +63,7 @@ window.onload = () => {
 passwordCheckButton.onclick = () => {
     const passwordString = passwordInput.value
 
-    socket.emit('join room', roomId, passwordString)
+    socket.emit('join room', roomId, passwordString, userId)
 
     socket.on('join room', (passwordCorrect) => {
         if (passwordCorrect) {
@@ -59,22 +74,6 @@ passwordCheckButton.onclick = () => {
         }
     })
 }
-
-//////////////////////////////  User ID  //////////////////////////////
-
-const getUserId = () => {
-    let storedUserId = localStorage.getItem('user_id')
-    if (storedUserId) {
-        console.log(`user_id already stored: ${storedUserId}`)
-        return Number(storedUserId)
-    }
-    storedUserId = Math.floor((Math.random() * 10000))
-    console.log(`user_id not stored or not number, new id: ${storedUserId}`)
-    localStorage.setItem('user_id', storedUserId)
-    return Number(storedUserId)
-}
-
-const userId = getUserId() 
 
 socket.on('connect', () => {
     console.log('Connected to the server.')
@@ -105,9 +104,14 @@ const displayMessage = (data) => {
     // Create messageElement and assign text
     const messageElement = document.createElement('li')
 
+    if (data.content.includes(userId)) {
+        return
+    }
 
     if (data.user_id === userId) {
         messageElement.innerHTML = `<div class="metadata">me (${data.user_id}) @ ${formattedDate}:</div><div class="messageContent">${data.content}</div>`;
+    } else if (data.user_id == 0) {
+        messageElement.innerHTML = `<div class="metadata"> announcement @ ${formattedDate}: user #${data.content}</div>`;
     } else {
         messageElement.innerHTML = `<div class="metadata"> (${data.user_id}) @ ${formattedDate}:</div><div class="messageContent">${data.content}</div>`;
 

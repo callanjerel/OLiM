@@ -72,6 +72,9 @@ a{
 .messageContent{
     font-size: larger;
 }
+.announcementContent{
+    font-size:xx-small;
+}
 
 /* The Modal (background) */
 .modal {
