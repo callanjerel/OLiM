@@ -51,12 +51,14 @@ a{
 }
 
 #chatroomTitle{
-   text-align: center;
+    text-align: center;
 }
 #title{
     text-align: center;
     margin:auto;
     font-size:xx-large;
+    width: auto;
+    display:inline-block;
     padding:10px 5px 5px 5px;
 }
 #title:hover{
