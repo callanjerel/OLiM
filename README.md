@@ -21,7 +21,7 @@ Please note that OLiM was developed as a college project and has not been deploy
 3. **Engage Anonymously:** Interact anonymously in a secure environment.
 
 ## Future Scope
-While OLiM is currently not deployed, the concept and design demonstrate significant potential for future development and deployment in a real-world scenario.
+There are no plans to work on this project futher.
 
 ## License
 GNU GPLv3
